@@ -4,7 +4,16 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
-    
+
+    <spring:beans>
+        <spring:import resource="classpath:services-common.xml" />
+        <spring:import resource="classpath:metrics.xml" />
+    </spring:beans>
+
+    <spring:beans>
+        <spring:bean id="ExceptionTransformer" name="ExceptionTransformer" class="com.l1p.interop.L1PExceptionTransformer" />
+    </spring:beans>
+
     <apikit:config name="apiConfig" raml="interop-mock-central-directory.raml" consoleEnabled="false" doc:name="Router"/>
     <flow name="api-main">
         <http:listener config-ref="api-httpListenerConfig" path="${mock-central-dir.basePath}/*" doc:name="HTTP"/>
