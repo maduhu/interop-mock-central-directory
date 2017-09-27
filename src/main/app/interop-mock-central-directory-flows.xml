@@ -1,16 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
-      xmlns:context="http://www.springframework.org/schema/context"
-      xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans"
+<mule xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xmlns:spring="http://www.springframework.org/schema/beans"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd         http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd         http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd ">
+      xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
+
+    <spring:beans>
+        <spring:bean id="dfspRepository" class="com.l1p.interop.mock_central_dir.repo.DFSPRepository"/>
+        <spring:bean id="userRepository" class="com.l1p.interop.mock_central_dir.repo.UserRepository"/>
+    </spring:beans>
+
     <flow name="get:/:apiConfig">
         <set-payload value="#[NullPayload.getInstance()]"/>
     </flow>
     <flow name="get:/identifier-types:apiConfig">
-        <set-payload value="#[NullPayload.getInstance()]"/>
-    </flow>
-    <flow name="get:/resources:apiConfig">
         <set-payload value="#[NullPayload.getInstance()]"/>
     </flow>
     <flow name="get:/health:apiConfig">
@@ -18,11 +26,18 @@
     </flow>
     <flow name="post:/commands/register:application/json:apiConfig">
         <set-property propertyName="Content-Type" value="application/json"/>
-        <set-payload value="#[NullPayload.getInstance()]"/>
+        <object-to-string-transformer/>
+        <expression-component doc:name="Post Participant"><![CDATA[payload = app.registry.dfspRepository.addDFSP(payload)]]></expression-component>
     </flow>
     <flow name="post:/resources:application/json:apiConfig">
         <set-property propertyName="Content-Type" value="application/json"/>
-        <set-payload value="#[NullPayload.getInstance()]"/>
+        <object-to-string-transformer/>
+        <expression-component doc:name="Post Participant"><![CDATA[payload = app.registry.userRepository.addUser(payload,message.inboundProperties.authorization)]]></expression-component>
     </flow>
+    <flow name="get:/resources:apiConfig">
+        <object-to-string-transformer/>
+        <expression-component doc:name="Get User"><![CDATA[payload = app.registry.userRepository.getUser(message.inboundProperties.'http.query.params'.identifier)]]></expression-component>
+    </flow>
+
 
 </mule>
