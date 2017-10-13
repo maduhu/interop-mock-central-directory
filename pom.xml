@@ -10,13 +10,13 @@
 
 	<groupId>com.l1p.interop</groupId>
 	<artifactId>interop-mock-central-directory</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.0.1</version>
 	<packaging>mule</packaging>
 	<name>Mule interop-mock-central-directory Application</name>
 
 	<scm>
 		<connection>scm:git:https://github.com/LevelOneProject/interop-mock-central-directory</connection>
-		<tag>HEAD</tag>
+		<tag>interop-mock-central-directory-1.0.1</tag>
 	</scm>
 
 	<properties>
